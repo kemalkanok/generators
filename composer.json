@@ -13,6 +13,6 @@
     "psr-4": {
       "Kanok\\Generators\\": "src/"
     }
-  }
-    "require": {}
+  },
+  "require": {}
 }

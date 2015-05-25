@@ -9,5 +9,10 @@
             "email": "ben@kemalkanok.com"
         }
     ],
+    "autoload": {
+    "psr-4": {
+      "Kanok\\Generators\\": "src/"
+    }
+  }
     "require": {}
 }

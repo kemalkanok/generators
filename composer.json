@@ -1,0 +1,13 @@
+{
+    "name": "kanok/generators",
+    "description": "fullproof mvc generator for laravel5",
+    "type": "extension",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kemal Kanok",
+            "email": "ben@kemalkanok.com"
+        }
+    ],
+    "require": {}
+}

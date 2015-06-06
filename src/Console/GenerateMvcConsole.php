@@ -80,7 +80,7 @@ class GenerateMvcConsole extends Command {
         }
     }
 
-    function generateModel()
+    /*function generateModel()
     {
         //get the model stub
         $modelStubPath = 'Stubs/Model/Default.stub';
@@ -251,7 +251,7 @@ class GenerateMvcConsole extends Command {
         $this->general->writeAppFile($routesPath,$modelStub);
 
         $this->info('routes updated!');
-    }
+    }*/
 
     /**
 	 * Get the console command arguments.

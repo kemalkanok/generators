@@ -49,14 +49,6 @@ class GenerateMvcConsole extends Command {
 	public function fire()
 	{
         $this->generalPrepare();
-        $this->generateModel();
-        $this->generateRequest();
-        $this->generateController();
-        $this->generateIndex();
-        $this->generateCreate();
-        $this->generateEdit();
-        $this->updateRoutes();
-
 
     }
 

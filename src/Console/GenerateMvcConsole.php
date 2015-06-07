@@ -2,6 +2,7 @@
 
 use Kanok\Generators\Command\GenerateModelCommand;
 use Illuminate\Console\Command;
+use Kanok\Generators\Command\GenerateRequestCommand;
 use Symfony\Component\Console\Input\InputOption;
 
 class GenerateMvcConsole extends Command {
@@ -44,8 +45,7 @@ class GenerateMvcConsole extends Command {
 	public function fire()
 	{
         $this->generalPrepare();
-        $this->generateModel();
-
+        $this->callCommands();
 
         $this->info('All Set is completed!');
     }
@@ -77,28 +77,7 @@ class GenerateMvcConsole extends Command {
     /*
 
 
-    function generateRequest()
-    {
-        //get the model stub
-        $modelStubPath = 'Stubs/Request/Default.stub';
-        $modelStub = $this->general->getFile($modelStubPath);
-        //bind the model
-        $fillables = "";
-        foreach ($this->fields as $key => $value) {
-            $fillables .= "'" . $key . "' => 'Required',";
-        }
-        $fillables = substr($fillables, 0, -1);
 
-        $modelStub = $this->general->quickStubDataBinding($modelStub, [
-            'model' => $this->modelName,
-            'fillable' => $fillables
-        ]);
-        // write the file
-        $modelPath = 'Http/Requests/'. $this->modelName . '.php';
-        $this->general->writeAppFile($modelPath, $modelStub);
-        //give a nice good news screen
-        $this->info('Request is created !');
-    }
 
     function generateController()
     {
@@ -249,9 +228,10 @@ class GenerateMvcConsole extends Command {
 		];
 	}
 
-    private function generateModel($model = 'Default')
+    private function callCommands($model = 'Default')
     {
         (new GenerateModelCommand($model,$this->conf))->fire();
+        (new GenerateRequestCommand($model,$this->conf))->fire();
     }
 
 }

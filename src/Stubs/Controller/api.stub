@@ -31,10 +31,10 @@ class {{model}} extends Controller {
     }
 
 
-    public function delete($id)
+    public function destroy($id)
     {
         Model::findOrFail($id)->delete();
-        return redirect()->back()->with('success','created');
+        return $this->success();
     }
 
 

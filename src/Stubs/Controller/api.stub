@@ -2,10 +2,11 @@
 
 use App\{{model}} as Model;
 use App\Http\Requests\{{model}} as Request;
+use Kanok\Generators\Framework\Traits\ApiControllerTrait;
 
 
 class {{model}} extends Controller {
-
+    use ApiControllerTrait;
     /**
      * Display a listing of the resource.
      *

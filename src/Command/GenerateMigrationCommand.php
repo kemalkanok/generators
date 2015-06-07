@@ -46,14 +46,14 @@ class GenerateMigrationCommand extends Command implements SelfHandling {
      */
     function fire()
     {
-        return $this->generateModel($this->keyword);
+        return $this->generateModel();
     }
 
 
-    function generateModel($keyword = "Default")
+    function generateModel()
     {
         //get the model stub
-        $modelStubPath = 'Stubs/Migration/'.$keyword.'.stub';
+        $modelStubPath = 'Stubs/Migration/Default.stub';
         $modelStub = $this->general->getFile($modelStubPath);
         //bind the model
         $migrationup = "";

@@ -52,9 +52,13 @@ class GenerateCrudCommand extends Command implements SelfHandling {
 
     function generateModel($keyword = "Default")
     {
+        //api check
+        if($keyword == 'api')
+            return true;
         $this->generateIndex($keyword);
         $this->generateCreate($keyword);
         $this->generateEdit($keyword);
+
         return true;
     }
     function generateIndex($keyword)

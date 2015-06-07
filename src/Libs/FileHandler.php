@@ -4,7 +4,7 @@ namespace Kanok\Generators\Libs;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Composer;
 
-class General {
+class FileHandler {
     /**
      * @var Filesystem
      */

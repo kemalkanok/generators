@@ -1,6 +1,6 @@
 <?php namespace Kanok\Generators\Console;
 
-use Kanok\Generators\Libs\General;
+use Kanok\Generators\Command\GenerateModelCommand;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -21,14 +21,10 @@ class GenerateMvcConsole extends Command {
 	protected $description = 'Generates A Whole package of Model , View , Controller , Request , etc..';
 
 
-
-    protected $tableName = "";
-    protected $modelName = "";
-    protected $fields = [];
     /**
      * @var General
      */
-    private $general;
+    private $conf;
 
 
     /**
@@ -38,7 +34,6 @@ class GenerateMvcConsole extends Command {
 	public function __construct( )
 	{
 		parent::__construct();
-        $this->general = app('Kanok\Generators\Libs\General');
     }
 
 	/**
@@ -49,8 +44,13 @@ class GenerateMvcConsole extends Command {
 	public function fire()
 	{
         $this->generalPrepare();
+        $this->generateModel();
 
+
+        $this->info('All Set is completed!');
     }
+
+
 
     /**
      * Gets minimal required info from user
@@ -58,43 +58,23 @@ class GenerateMvcConsole extends Command {
      */
     function generalPrepare()
     {
-        $this->tableName = $this->ask('Table Name:');
-        $this->modelName = $this->ask('Model Name:');
+        $tableName = $this->ask('Table Name:');
+        $modelName = $this->ask('Model Name:');
         $i = 1;
+        $fields = [];
         while (true) {
             $field = trim($this->ask($i . '.Column Specs:'));
             if ($field == "") {
                 break;
             }
             $field = explode(':', $field);
-            $this->fields[$field[0]] = array_splice($field, 1);
+            $fields[$field[0]] = array_splice($field, 1);
             $i++;
         }
+        $this->conf = (object)compact('tableName','modelName','fields');
     }
 
-    /*function generateModel()
-    {
-        //get the model stub
-        $modelStubPath = 'Stubs/Model/Default.stub';
-        $modelStub = $this->general->getFile($modelStubPath);
-        //bind the model
-        $fillables = "";
-        foreach ($this->fields as $key => $value) {
-            $fillables .= "'" . $key . "',";
-        }
-        $fillables = substr($fillables, 0, -1);
-
-        $modelStub = $this->general->quickStubDataBinding($modelStub, [
-            'model' => $this->modelName,
-            'table' => $this->tableName,
-            'fillable' => $fillables
-        ]);
-        // write the file
-        $modelPath = $this->modelName . '.php';
-        $this->general->writeAppFile($modelPath, $modelStub);
-        //give a nice good news screen
-        $this->info('model is created !');
-    }
+    /*
 
 
     function generateRequest()
@@ -268,5 +248,10 @@ class GenerateMvcConsole extends Command {
 			['gallery', null, InputOption::VALUE_NONE, 'Creates Package for Gallery', null],
 		];
 	}
+
+    private function generateModel($model = 'Default')
+    {
+        (new GenerateModelCommand($model,$this->conf))->fire();
+    }
 
 }

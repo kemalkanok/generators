@@ -46,14 +46,14 @@ class GenerateModelCommand extends Command implements SelfHandling {
      */
     function fire()
     {
-        return $this->generateModel($this->keyword);
+        return $this->generateModel();
     }
 
 
-    function generateModel($keyword = "Default")
+    function generateModel()
     {
         //get the model stub
-        $modelStubPath = 'Stubs/Model/'.$keyword.'.stub';
+        $modelStubPath = 'Stubs/Model/Default.stub';
         $modelStub = $this->general->getFile($modelStubPath);
         //bind the model
         $fillables = "";

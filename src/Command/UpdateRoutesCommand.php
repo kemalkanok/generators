@@ -46,11 +46,11 @@ class UpdateRoutesCommand extends Command implements SelfHandling {
      */
     function fire()
     {
-        return $this->generateModel($this->keyword);
+        return $this->generateModel();
     }
 
 
-    function generateModel($keyword = "Default")
+    function generateModel()
     {
         //get the model stub
         $routesPath = 'Http/Routes.php';

@@ -48,8 +48,17 @@ class GenerateMvcConsole extends Command {
 	 */
 	public function fire()
 	{
+
         $this->generalPrepare();
-        $this->callCommands();
+        if($this->option('api'))
+        {
+            $this->callCommands('api');
+
+        }
+        else
+        {
+            $this->callCommands();
+        }
 
         $this->info('All Set is completed!');
     }
@@ -97,7 +106,7 @@ class GenerateMvcConsole extends Command {
 	protected function getOptions()
 	{
 		return [
-			//['auth', null, InputOption::VALUE_NONE, 'Creates Package for Authentication.', null],
+			['api', 'a', InputOption::VALUE_NONE, 'creates crud package for api integration', null],
 		];
 	}
 

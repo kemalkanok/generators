@@ -52,6 +52,19 @@ class FileHandler {
         //chmod($file,644);
         return true;
     }
+    /**
+     * Writes the requested text to the file
+     * @param $filename
+     * @param $text
+     * @return int
+     */
+    public function writeFile($filename , $text)
+    {
+        $file = ($filename);
+        $this->filesystem->put($file,$text);
+        //chmod($file,644);
+        return true;
+    }
 
     /**
      * Binds the data via replacement to Stub

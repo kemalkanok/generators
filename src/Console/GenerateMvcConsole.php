@@ -2,6 +2,7 @@
 
 use Kanok\Generators\Command\GenerateControllerCommand;
 use Kanok\Generators\Command\GenerateCrudCommand;
+use Kanok\Generators\Command\GenerateMigrationCommand;
 use Kanok\Generators\Command\GenerateModelCommand;
 use Illuminate\Console\Command;
 use Kanok\Generators\Command\GenerateRequestCommand;
@@ -96,13 +97,13 @@ class GenerateMvcConsole extends Command {
 	protected function getOptions()
 	{
 		return [
-			['auth', null, InputOption::VALUE_NONE, 'Creates Package for Authentication.', null],
-			['gallery', null, InputOption::VALUE_NONE, 'Creates Package for Gallery', null],
+			//['auth', null, InputOption::VALUE_NONE, 'Creates Package for Authentication.', null],
 		];
 	}
 
     private function callCommands($model = 'Default')
     {
+        (new GenerateMigrationCommand($model,$this->conf))->fire();
         (new GenerateModelCommand($model,$this->conf))->fire();
         (new GenerateRequestCommand($model,$this->conf))->fire();
         (new GenerateControllerCommand($model,$this->conf))->fire();

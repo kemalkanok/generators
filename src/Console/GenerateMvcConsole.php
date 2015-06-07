@@ -5,6 +5,7 @@ use Kanok\Generators\Command\GenerateCrudCommand;
 use Kanok\Generators\Command\GenerateModelCommand;
 use Illuminate\Console\Command;
 use Kanok\Generators\Command\GenerateRequestCommand;
+use Kanok\Generators\Command\UpdateRoutesCommand;
 use Symfony\Component\Console\Input\InputOption;
 
 class GenerateMvcConsole extends Command {
@@ -75,29 +76,7 @@ class GenerateMvcConsole extends Command {
         }
         $this->conf = (object)compact('tableName','modelName','fields');
     }
-
-    /*
-
-
-
-
-
-
-
-
-
-    function updateRoutes()
-    {
-        //get the model stub
-        $routesPath = 'Http\Routes.php';
-        $modelStub = $this->general->getFile($routesPath);
-        $modelStub .= "
-        resource('".$this->modelName."','".$this->modelName."');";
-        $this->general->writeAppFile($routesPath,$modelStub);
-
-        $this->info('routes updated!');
-    }*/
-
+    
     /**
 	 * Get the console command arguments.
 	 *
@@ -128,6 +107,7 @@ class GenerateMvcConsole extends Command {
         (new GenerateRequestCommand($model,$this->conf))->fire();
         (new GenerateControllerCommand($model,$this->conf))->fire();
         (new GenerateCrudCommand($model,$this->conf))->fire();
+        (new UpdateRoutesCommand($model,$this->conf))->fire();
     }
 
 }

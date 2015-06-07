@@ -1,5 +1,6 @@
 <?php namespace Kanok\Generators\Console;
 
+use Kanok\Generators\Command\GenerateControllerCommand;
 use Kanok\Generators\Command\GenerateModelCommand;
 use Illuminate\Console\Command;
 use Kanok\Generators\Command\GenerateRequestCommand;
@@ -79,23 +80,7 @@ class GenerateMvcConsole extends Command {
 
 
 
-    function generateController()
-    {
-        //get the model stub
-        $modelStubPath = 'Stubs/Controller/Default.stub';
-        $modelStub = $this->general->getFile($modelStubPath);
-        //bind the model
-
-
-        $modelStub = $this->general->quickStubDataBinding($modelStub, [
-            'model' => $this->modelName
-        ]);
-        // write the file
-        $modelPath = 'Http/Controllers/'. $this->modelName . '.php';
-        $this->general->writeAppFile($modelPath, $modelStub);
-        //give a nice good news screen
-        $this->info('Controller is created !');
-    }
+    
 
     function generateIndex()
     {
@@ -232,6 +217,7 @@ class GenerateMvcConsole extends Command {
     {
         (new GenerateModelCommand($model,$this->conf))->fire();
         (new GenerateRequestCommand($model,$this->conf))->fire();
+        (new GenerateControllerCommand($model,$this->conf))->fire();
     }
 
 }

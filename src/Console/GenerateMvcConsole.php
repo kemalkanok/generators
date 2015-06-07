@@ -1,6 +1,7 @@
 <?php namespace Kanok\Generators\Console;
 
 use Kanok\Generators\Command\GenerateControllerCommand;
+use Kanok\Generators\Command\GenerateCrudCommand;
 use Kanok\Generators\Command\GenerateModelCommand;
 use Illuminate\Console\Command;
 use Kanok\Generators\Command\GenerateRequestCommand;
@@ -80,101 +81,9 @@ class GenerateMvcConsole extends Command {
 
 
 
-    
-
-    function generateIndex()
-    {
-        //get the model stub
-        $modelStubPath = 'Stubs/View/Index/Default.stub';
-        $modelStub = $this->general->getFile($modelStubPath);
-        //bind the model
-
-        $modelStub = $this->general->quickStubDataBinding($modelStub, [
-            'model' => $this->modelName
-        ]);
-        // write the file
-        $indexFolder ='../resources/views/'. $this->modelName . "/";
-        $this->general->createFolder($indexFolder);
-
-        $modelPath = '../resources/views/'. $this->modelName . '/index.blade.php';
-        $this->general->writeAppFile($modelPath, $modelStub);
-        //give a nice good news screen
-        $this->info('index view is created !');
-    }
-
-    function generateCreate()
-    {
-        //get the model stub
-        $modelStubPath = 'Stubs/View/Create/Default.stub';
-        $modelStub = $this->general->getFile($modelStubPath);
-        //bind the model
-
-        $fillables = "";
-        foreach ($this->fields as $key => $value) {
-
-                $fillables .= '<div class="form-group">
-        <label for="'.$key.'">{{trans("'.$this->modelName.'.'.$key.'")}}</label>
-        <input type="text" class="form-control" id="'.$key.'"  name="'.$key.'">
-    </div>
-    ';
 
 
 
-
-        }
-
-
-
-        $modelStub = $this->general->quickStubDataBinding($modelStub, [
-            'model' => $this->modelName,
-            'form' => $fillables
-        ]);
-        // write the file
-        $indexFolder ='../resources/views/'. $this->modelName . "/";
-        $this->general->createFolder($indexFolder);
-
-        $modelPath = '../resources/views/'. $this->modelName . '/create.blade.php';
-        $this->general->writeAppFile($modelPath, $modelStub);
-        //give a nice good news screen
-        $this->info('create view is created !');
-    }
-
-    function generateEdit()
-    {
-        //get the model stub
-        $modelStubPath = 'Stubs/View/Edit/Default.stub';
-        $modelStub = $this->general->getFile($modelStubPath);
-        //bind the model
-
-        $fillables = "";
-        foreach ($this->fields as $key => $value) {
-
-                $fillables .= '<div class="form-group">
-        <label for="'.$key.'">{{trans("'.$this->modelName.'.'.$key.'")}}</label>
-        <input type="text" class="form-control" id="'.$key.'"  name="'.$key.'" value="{{$element->'.$key.'}}">
-    </div>
-    ';
-
-
-
-
-        }
-
-
-
-        $modelStub = $this->general->quickStubDataBinding($modelStub, [
-            'model' => $this->modelName,
-            'form' => $fillables
-        ]);
-        // write the file
-        $indexFolder ='../resources/views/'. $this->modelName . "/";
-        $this->general->createFolder($indexFolder);
-
-        $modelPath = '../resources/views/'. $this->modelName . '/edit.blade.php';
-        $this->general->writeAppFile($modelPath, $modelStub);
-        //give a nice good news screen
-        $this->info('edit view is created !');
-    }
 
 
     function updateRoutes()
@@ -218,6 +127,7 @@ class GenerateMvcConsole extends Command {
         (new GenerateModelCommand($model,$this->conf))->fire();
         (new GenerateRequestCommand($model,$this->conf))->fire();
         (new GenerateControllerCommand($model,$this->conf))->fire();
+        (new GenerateCrudCommand($model,$this->conf))->fire();
     }
 
 }

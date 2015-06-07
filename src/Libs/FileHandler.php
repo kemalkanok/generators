@@ -48,7 +48,9 @@ class FileHandler {
     public function writeAppFile($filename , $text)
     {
         $file = app_path($filename);
-        return $this->filesystem->put($file,$text);
+        $this->filesystem->put($file,$text);
+        //chmod($file,644);
+        return true;
     }
 
     /**
@@ -76,7 +78,7 @@ class FileHandler {
         $path = app_path($path);
         if(!$this->filesystem->exists($path))
         {
-            $this->filesystem->makeDirectory($path,755,true);
+            $this->filesystem->makeDirectory($path,0777,true);
         }
     }
 }

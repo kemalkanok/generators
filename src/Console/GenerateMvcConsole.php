@@ -27,7 +27,7 @@ class GenerateMvcConsole extends Command {
 
 
     /**
-     * @var General
+     * @var array
      */
     private $conf;
 
@@ -48,16 +48,28 @@ class GenerateMvcConsole extends Command {
 	 */
 	public function fire()
 	{
-
-        $this->generalPrepare();
-        if($this->option('api'))
+        if($this->option('auth_api'))
         {
-            $this->callCommands('api');
+           //auth api state
+            $this->prepareWithoutInput('auth_api');
+
+            //$this->callCommands('auth_api');
+            $this->conf->modelName = 'Register';
+            (new GenerateRequestCommand('Default',$this->conf))->fire();
 
         }
         else
         {
-            $this->callCommands();
+            $this->generalPrepare();
+            if($this->option('api'))
+            {
+                $this->callCommands('api');
+
+            }
+            else
+            {
+                $this->callCommands();
+            }
         }
 
         $this->info('All Set is completed!');
@@ -87,16 +99,6 @@ class GenerateMvcConsole extends Command {
         $this->conf = (object)compact('tableName','modelName','fields');
     }
     
-    /**
-	 * Get the console command arguments.
-	 *
-	 * @return array
-	 */
-	protected function getArguments()
-	{
-		return [
-		];
-	}
 
 	/**
 	 * Get the console command options.
@@ -107,17 +109,73 @@ class GenerateMvcConsole extends Command {
 	{
 		return [
 			['api', 'a', InputOption::VALUE_NONE, 'creates crud package for api integration', null],
+			['auth_api', null, InputOption::VALUE_NONE, 'creates crud package for api integration', null],
 		];
 	}
 
+    /**
+     * Batch Command Caller
+     * @param string $model
+     */
     private function callCommands($model = 'Default')
     {
-        (new GenerateMigrationCommand($model,$this->conf))->fire();
-        (new GenerateModelCommand($model,$this->conf))->fire();
-        (new GenerateRequestCommand($model,$this->conf))->fire();
-        (new GenerateControllerCommand($model,$this->conf))->fire();
-        (new GenerateCrudCommand($model,$this->conf))->fire();
-        (new UpdateRoutesCommand($model,$this->conf))->fire();
+        if((new GenerateMigrationCommand($model,$this->conf))->fire())
+        {
+            $this->info('Migration Created');
+        }
+        if((new GenerateModelCommand($model,$this->conf))->fire())
+        {
+            $this->info('Model Created');
+        }
+        if((new GenerateRequestCommand($model,$this->conf))->fire())
+        {
+            $this->info('Request Created');
+        }
+        if((new GenerateControllerCommand($model,$this->conf))->fire())
+        {
+            $this->info('Controller Created');
+        }
+        if($model != 'auth_api')
+        {
+            if((new GenerateCrudCommand($model,$this->conf))->fire())
+            {
+                $this->info('Crud Created');
+            }
+        }
+
+        if((new UpdateRoutesCommand($model,$this->conf))->fire())
+        {
+            $this->info('Route Updated');
+        }
+    }
+
+    /**
+     * General Prepare method for no input reasons
+     * @param $key
+     */
+    private function prepareWithoutInput($key)
+    {
+        $this->conf = new \StdClass();
+
+        switch($key)
+        {
+            case 'auth_api':
+                $this->conf->tableName = "users";
+                $this->conf->modelName = "User";
+                $this->conf->fields = [
+                    'username' => [
+                        'string'
+                    ],
+                    'password' => [
+                        'string'
+                    ],
+                    'email' => [
+                        'string'
+                    ],
+                ];
+            break;
+        }
+
     }
 
 }

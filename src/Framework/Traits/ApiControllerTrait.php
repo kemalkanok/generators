@@ -18,9 +18,13 @@ trait ApiControllerTrait {
      */
     public function success($message = null)
     {
+        if(!$message)
+        {
+            $message = "Operation success";
+        }
         return [
             'status' => 200,
-            'message' => $message ? $message : "Operation success"
+            'message' => $message
         ];
     }
 

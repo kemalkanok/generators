@@ -46,15 +46,28 @@ class UpdateRoutesCommand extends Command implements SelfHandling {
      */
     function fire()
     {
-        return $this->generateModel();
+        return $this->generateModel($this->keyword);
     }
 
 
-    function generateModel()
+    function generateModel($model)
     {
         //get the model stub
         $routesPath = 'Http/Routes.php';
         $modelStub = $this->general->getFile($routesPath);
+        switch($model)
+        {
+            case 'auth_api':
+                $modelStub = "resource('auth','User');
+post('register','User@register');
+get('logout','User@destroy');";
+            break;
+
+            default:
+                $modelStub .= "
+                resource('".$this->conf->modelName."','".$this->conf->modelName."');";
+            break;
+        }
         $modelStub .= "
         resource('".$this->conf->modelName."','".$this->conf->modelName."');";
         $this->general->writeAppFile($routesPath,$modelStub);

@@ -87,6 +87,7 @@ class GenerateMigrationCommand extends Command implements SelfHandling {
         $modelPath = '../database/migrations/'.date('Y_m_d_His').'_'.$this->conf->modelName . '.php';
         $this->general->writeAppFile($modelPath, $modelStub);
         //give a nice good news screen
+
         return true;
     }
 }

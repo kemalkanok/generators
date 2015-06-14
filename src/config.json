@@ -1,8 +1,9 @@
 {
 	"name":"Settings for generators",
-	"descriotion":"settings for packages to generate",
+	"description":"settings for packages to generate",
+	"basePath":"app",
 	"packages":{
-		"deafult":{
+		"default":{
 			"migration":true,
 			"model":true,
 			"request":true,

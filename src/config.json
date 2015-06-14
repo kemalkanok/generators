@@ -1,0 +1,44 @@
+{
+	"name":"Settings for generators",
+	"descriotion":"settings for packages to generate",
+	"packages":{
+		"deafult":{
+			"migration":true,
+			"model":true,
+			"request":true,
+			"command":true,
+			"views":true,
+			"controller":true,
+			"route":true
+		},
+		"api":{
+			"migration":true,
+			"model":true,
+			"request":true,
+			"command":true,
+			"controller":true,
+			"route":true,
+			"translation":false
+		},
+		"auth_api":{
+			"migration":true,
+			"model":true,
+			"request":true,
+			"command":true,
+			"controller":true,
+			"route":true,
+			"translation":false
+		},
+		"auth":{
+			"migration":true,
+			"model":true,
+			"request":true,
+			"command":true,
+			"controller":true,
+			"route":true,
+			"views":true,
+			"translation":true
+		},
+
+	}
+}

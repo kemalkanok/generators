@@ -1,10 +1,10 @@
 <?php namespace App\Http\Controllers;
 
-use App\{{model}} as Model;
-use App\Http\Requests\{{model}} as Request;
+use App\{{model}};
+use App\Http\Requests\{{request}};
 
 
-class {{model}} extends Controller {
+class {{controller}} extends Controller {
 
     /**
      * Display a listing of the resource.
@@ -13,8 +13,8 @@ class {{model}} extends Controller {
      */
     public function index()
     {
-        $collection = Model::get();
-        return view('{{model}}.index',compact('collection'));
+        $collection = {{model}}::get();
+        return view('{{view}}.index',compact('collection'));
     }
 
     /**
@@ -24,31 +24,31 @@ class {{model}} extends Controller {
      */
     public function create()
     {
-        return view('{{model}}.create');
+        return view('{{view}}.create');
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param {{model}}|Request $request
+     * @param {{request}} $request
      * @return Response
      */
-    public function store(Request $request)
+    public function store({{request}} $request)
     {
-        Model::create($request->all());
-        return redirect('{{model}}.index')->with('success','created');
+        {{model}}::create($request->all());
+        return redirect()->route('{{route}}.index')->with('success',trans('flash.created',['model'=>trans('{{lang}}.model')]));
     }
 
     /**
-     * Delete the specified resource.
+     * Show information of the specified resource.
      *
      * @param  int  $id
      * @return Response
      */
     public function show($id)
     {
-        Model::findOrFail($id)->delete();
-        return redirect()->back()->with('success','created');
+        $element = {{model}}::findOrFail($id);
+        return view('{{view}}.show',compact('element'));
     }
 
     /**
@@ -59,8 +59,8 @@ class {{model}} extends Controller {
      */
     public function edit($id)
     {
-        $element = Model::findOrFail($id);
-        return view('{{model}}.edit',compact('element'));
+        $element = {{model}}::findOrFail($id);
+        return view('{{view}}.edit',compact('element'));
 
     }
 
@@ -68,15 +68,27 @@ class {{model}} extends Controller {
      * Update the specified resource in storage.
      *
      * @param  int  $id
-     * @param {{model}}|Request $request
+     * @param {{request}} $request
      * @return Response
      */
-    public function update($id,Request $request)
+    public function update($id,{{request}} $request)
     {
-        Model::findOrFail($id)
+        {{model}}::findOrFail($id)
         ->fill($request->all())
         ->save();
-        return redirect('{{model}}.index')->with('success','created');
+        return redirect()->route('{{route}}.index')->with('success',trans('flash.updated',['model'=>trans('{{lang}}.model')]));
+    }
+
+    /**
+     * Delete the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function destroy($id)
+    {
+        {{model}}::findOrFail($id)->delete();
+        return redirect()->back()->with('success',trans('flash.deleted',['model'=>trans('{{lang}}.model')]));
     }
 
 }

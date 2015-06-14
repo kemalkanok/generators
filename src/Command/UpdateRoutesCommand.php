@@ -35,10 +35,10 @@ class UpdateRoutesCommand extends Command implements SelfHandling {
      */
     function __construct( $keyword , $conf)
     {
-
-        $this->general = app('Kanok\Generators\Libs\FileHandler');
-        $this->keyword = $keyword;
-        $this->conf = $conf;
+        $this->general  = app('Kanok\Generators\Libs\FileHandler');
+        $this->name     = app('Kanok\Generators\Libs\NameHelper');
+        $this->keyword  = $keyword;
+        $this->conf     = $conf;
     }
 
     /**
@@ -49,27 +49,27 @@ class UpdateRoutesCommand extends Command implements SelfHandling {
         return $this->generateModel($this->keyword);
     }
 
-
+    /**
+     * Generate model
+     * @param $model
+     * @return bool
+     */
     function generateModel($model)
     {
         //get the model stub
-        $routesPath = 'Http/Routes.php';
-        $modelStub = $this->general->getFile($routesPath);
+        $routesPath = 'Http/routes.php';
+        $modelStub  = $this->general->getFile($routesPath);
         switch($model)
         {
             case 'auth_api':
-                $modelStub = "resource('auth','User');
-post('register','User@register');
-get('logout','User@destroy');";
+                $modelStub = "resource('auth','User'); post('register','User@register');get('logout','User@destroy');";
             break;
 
             default:
-                $modelStub .= "
-                resource('".$this->conf->modelName."','".$this->conf->modelName."');";
+                $modelStub .= "resource('".$this->name->getRouteName($this->conf->resource)."','".$this->name->getControllerName($this->conf->resource)."');";
             break;
         }
-        $modelStub .= "
-        resource('".$this->conf->modelName."','".$this->conf->modelName."');";
+        //$modelStub .= "resource('".$this->conf->modelName."','".$this->conf->modelName."');";
         $this->general->writeAppFile($routesPath,$modelStub);
         return true;
     }

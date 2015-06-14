@@ -1,8 +1,8 @@
 <?php namespace App\Http\Requests;
 
-use Kanok\Generators\Framework\Http\Requests\ApiRequest as Request;
+use Illuminate\Foundation\Http\FormRequest;
 
-class {{model}} extends Request {
+class {{request}} extends Request {
 
 	/**
 	 * Determine if the user is authorized to make this request.

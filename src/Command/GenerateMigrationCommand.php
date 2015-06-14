@@ -12,6 +12,7 @@ namespace Kanok\Generators\Command;
 use App\Commands\Command;
 use Illuminate\Contracts\Bus\SelfHandling;
 use Kanok\Generators\Libs\FileHandler;
+use Kanok\Generators\Libs\NameHelper;
 
 class GenerateMigrationCommand extends Command implements SelfHandling {
     /**
@@ -35,10 +36,10 @@ class GenerateMigrationCommand extends Command implements SelfHandling {
      */
     function __construct( $keyword , $conf)
     {
-
-        $this->general = app('Kanok\Generators\Libs\FileHandler');
-        $this->keyword = $keyword;
-        $this->conf = $conf;
+        $this->general  = app('Kanok\Generators\Libs\FileHandler');
+        $this->name     = app('Kanok\Generators\Libs\NameHelper');
+        $this->keyword  = $keyword;
+        $this->conf     = $conf;
     }
 
     /**
@@ -49,14 +50,19 @@ class GenerateMigrationCommand extends Command implements SelfHandling {
         return $this->generateModel();
     }
 
-
+    /**
+     * Generate migration
+     * @return bool
+     */
     function generateModel()
     {
         //get the model stub
-        $modelStubPath = 'Stubs/Migration/Default.stub';
-        $modelStub = $this->general->getFile($modelStubPath);
+        $modelStubPath  = 'Stubs/Migration/Default.stub';
+        $modelStub      = $this->general->getFile($modelStubPath);
+
         //bind the model
-        $migrationup = "";
+        $migrationup    = "";
+
         foreach($this->conf->fields as $k => $fieldSet)
         {
             $migrationup.='$table';
@@ -77,14 +83,12 @@ class GenerateMigrationCommand extends Command implements SelfHandling {
         }
 
         $modelStub = $this->general->quickStubDataBinding($modelStub, [
-            'model' => $this->conf->modelName,
-            'table' => $this->conf->tableName,
-            'migration_up' => $migrationup,
-
-
+            'class'         => $this->name->getMigrationClassName($this->conf->tableName),
+            'table'         => $this->conf->tableName,
+            'migration_up'  => $migrationup,
         ]);
         // write the file
-        $modelPath = '../database/migrations/'.date('Y_m_d_His').'_'.$this->conf->modelName . '.php';
+        $modelPath = '../database/migrations/'.date('Y_m_d_His').'_'.$this->name->getMigrationName($this->conf->tableName) .'.php';
         $this->general->writeAppFile($modelPath, $modelStub);
         //give a nice good news screen
 

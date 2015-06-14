@@ -1,5 +1,7 @@
 <?php namespace Kanok\Generators\Console;
 
+use Illuminate\Foundation\Bus\DispatchesCommands;
+use Illuminate\Support\Facades\Artisan;
 use Kanok\Generators\Command\GenerateControllerCommand;
 use Kanok\Generators\Command\GenerateCrudCommand;
 use Kanok\Generators\Command\GenerateMigrationCommand;
@@ -7,9 +9,12 @@ use Kanok\Generators\Command\GenerateModelCommand;
 use Illuminate\Console\Command;
 use Kanok\Generators\Command\GenerateRequestCommand;
 use Kanok\Generators\Command\UpdateRoutesCommand;
+use Psy\Command\DumpCommand;
 use Symfony\Component\Console\Input\InputOption;
 
 class GenerateMvcConsole extends Command {
+
+    use DispatchesCommands;
 
 	/**
 	 * The console command name.
@@ -72,6 +77,9 @@ class GenerateMvcConsole extends Command {
             }
         }
 
+        // TODO call dump-autoload command
+        //Artisan::call('dump-autoload');
+
         $this->info('All Set is completed!');
     }
 
@@ -93,10 +101,15 @@ class GenerateMvcConsole extends Command {
                 break;
             }
             $field = explode(':', $field);
-            $fields[$field[0]] = array_splice($field, 1);
+            $type = array_splice($field, 1);
+            if( count($type) == 0 ){
+                $type = array('string');
+            }
+            $fields[$field[0]] = $type;
             $i++;
         }
-        $this->conf = (object)compact('tableName','modelName','fields');
+        $resource = camel_case($modelName);
+        $this->conf = (object)compact('resource','tableName','modelName','fields');
     }
     
 

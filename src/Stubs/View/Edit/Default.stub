@@ -1,14 +1,14 @@
 @extends('app')
 
 @section('title')
-{{trans('all.{{model}}.new')}}
+    {{ trans('{{lang}}.edit.page_title') }}
 @stop
 
 @section('content')
-<form action="{{route('{{model}}.store')}}" method="post">
-    <input type="hidden" name="_token" value="{{csrf_token()}}"/>
+<form action="{{ route('{{route}}.update',$element) }}" method="post">
+    <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
     <input type="hidden" name="_method" value="PUT"/>
     {{form}}
-  <button type="submit" class="btn btn-default">{{trans('all.update')}}</button>
+  <button type="submit" class="btn btn-default">{{ trans('global.button.update',['model'=>trans('{{lang}}.model')]) }}</button>
 </form>
 @stop

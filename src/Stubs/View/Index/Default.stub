@@ -1,30 +1,31 @@
 @extends('app')
 
 @section('title')
-{{trans('all.{{model}}')}}
+    {{ trans('{{lang}}.index.page_title') }}
 @stop
 
 @section('content')
 <p>
-    <a href='{{route("{{model}}.create")}}'>{{trans('all.add')}}</a>
+    <a href='{{ route("{{route}}.create") }}'>{{ trans('global.button.create',['model'=>trans('{{lang}}.model')]) }}</a>
 </p>
 <p>
     <table class="table">
         <thead>
             <tr>
-                <td>{{trans('all.id')}}</td>
-                <td>{{trans('all.edit')}}</td>
-                <td>{{trans('all.delete')}}</td>
+                <td>{{ trans('validation.attributes.id') }}</td>
+                <td>{{ trans('all.edit') }}</td>
+                <td>{{ trans('all.delete') }}</td>
             </tr>
         </thead>
         <tbody>
             @foreach($collection as $row)
             <tr>
-                <td>{{$row->id}}</td>
-                <td><a href='{{route("{{model}}.edit",$row->id)}}'>{{trans('all.edit')}}</a></td>
-                <td><a href='{{route("{{model}}.show",$row->id)}}'>{{trans('all.delete')}}</a></td>
+                <td>{{ $row->id }}</td>
+                <td><a href='{{ route("{{route}}.edit",$row) }}'>{{ trans('global.edit') }}</a></td>
+                <td><a href='{{ route("{{route}}.show",$row) }}'>{{ trans('global.show') }}</a></td>
+                <td><a href='{{ route("{{route}}.destroy",$row) }}' data-method="delete">{{ trans('global.delete') }}</a></td>
             </tr>
-            @endforeadch
+            @endforeach
         </tbody>
     </table>
 </p>

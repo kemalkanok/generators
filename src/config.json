@@ -41,7 +41,7 @@
 			"route":true,
 			"views":true,
 			"translation":true
-		},
+		}
 
 	}
 }

@@ -1,13 +1,8 @@
 <?php namespace Kanok\Generators\Console;
 
-use Kanok\Generators\Command\GenerateControllerCommand;
-use Kanok\Generators\Command\GenerateCrudCommand;
-use Kanok\Generators\Command\GenerateMigrationCommand;
-use Kanok\Generators\Command\GenerateModelCommand;
+
 use Illuminate\Console\Command;
-use Kanok\Generators\Command\GenerateRequestCommand;
-use Kanok\Generators\Command\UpdateRoutesCommand;
-use Symfony\Component\Console\Input\InputOption;
+use Kanok\Generators\Libs\Config;
 
 class GenerateMvcConsole extends Command {
 
@@ -16,14 +11,14 @@ class GenerateMvcConsole extends Command {
 	 *
 	 * @var string
 	 */
-	protected $name = 'generate:package';
+	protected $name = 'gen:pack';
 
 	/**
 	 * The console command description.
 	 *
 	 * @var string
 	 */
-	protected $description = 'Generates A Whole package of Model , View , Controller , Request , etc..';
+	protected $description = 'Generates A Whole package of Model , View , Controller , Command , Request , etc..';
 
 
 
@@ -45,6 +40,8 @@ class GenerateMvcConsole extends Command {
 	public function fire()
 	{
 
+        dd ((new Config())->get('package'));
+        $this->info('completed: Package Generated Successfully');
     }
 
 

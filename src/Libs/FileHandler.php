@@ -45,26 +45,17 @@ class FileHandler {
      * @param $text
      * @return int
      */
-    public function writeAppFile($filename , $text)
+    public function writeFile($filename , $text , $location = null)
     {
         $file = app_path($filename);
+        if($location)
+        {
+            $file = $location.$filename;
+        }
         $this->filesystem->put($file,$text);
-        //chmod($file,644);
         return true;
     }
-    /**
-     * Writes the requested text to the file
-     * @param $filename
-     * @param $text
-     * @return int
-     */
-    public function writeFile($filename , $text)
-    {
-        $file = ($filename);
-        $this->filesystem->put($file,$text);
-        //chmod($file,644);
-        return true;
-    }
+
 
     /**
      * Binds the data via replacement to Stub
@@ -72,7 +63,7 @@ class FileHandler {
      * @param array $arr
      * @return mixed
      */
-    public function quickStubDataBinding($stub , array $arr )
+    public function stubDataBinding($stub , array $arr )
     {
         foreach($arr as $key => $value)
         {

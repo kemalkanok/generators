@@ -1,7 +1,7 @@
 {
 	"name":"Settings for generators",
 	"description":"settings for packages to generate",
-	"basePath":"app",
+	"basePath":"app/",
 	"packages":{
 		"default":{
 			"migration":true,
@@ -19,6 +19,7 @@
 			"command":true,
 			"controller":true,
 			"route":true,
+			"views":false,
 			"translation":false
 		},
 		"auth_api":{
@@ -28,6 +29,7 @@
 			"command":true,
 			"controller":true,
 			"route":true,
+			"views":false,
 			"translation":false
 		},
 		"auth":{

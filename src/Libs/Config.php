@@ -22,7 +22,6 @@ class Config {
      */
     public function __construct()
     {
-        //$this->dataSet = file_get_contents(__FILE__ . 'config.json');
         $this->decode();
 
     }

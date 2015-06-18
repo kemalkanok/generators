@@ -3,6 +3,7 @@
 	"description":"settings for packages to generate",
 	"appPath":"app/",
 	"stubPath":"../Stubs/",
+	"status":["create","alter"],
 	"packages":{
 		"default":{
 			"migration":true,

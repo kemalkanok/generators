@@ -1,7 +1,7 @@
 {
 	"name":"Settings for generators",
 	"description":"settings for packages to generate",
-	"basePath":"app/",
+	"appPath":"app/",
 	"stubPath":"../Stubs/",
 	"packages":{
 		"default":{

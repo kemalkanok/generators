@@ -13,19 +13,26 @@ class FileHandler {
      */
     function readFileFromBundle($file,$basePath = null)
     {
-        if(!$basePath)
-        {
-            $basePath = __DIR__ .'/'. (new Config())->get('stubPath');
-        }
+        $basePath = $this->inheritSettings($basePath,'stubPath');
         return file_get_contents($basePath.$file);
     }
     function readFileFromApp($file,$basePath = null)
     {
-        if(!$basePath)
-        {
-            $basePath = app_path() .'/../'. (new Config())->get('basePath');
-        }
+        $basePath = $this->inheritSettings($basePath,'appPath');
         return file_get_contents($basePath.$file);
+    }
+
+    /**
+     * @param $basePath
+     * @return string
+     */
+    private function inheritSettings($basePath,$key)
+    {
+        if (!$basePath) {
+            $basePath = __DIR__ . '/' . (new Config())->get($key);
+            return $basePath;
+        }
+        return $basePath;
     }
 
 }

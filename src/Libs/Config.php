@@ -11,20 +11,18 @@ namespace Kanok\Generators\Libs;
 
 class Config {
 
-    private $dataSet;
     /**
-     * @var
+     * @var object
      */
-    private $fileHandler;
+    private $dataSet;
+
 
     /**
      * Construct the config data class
      */
     public function __construct()
     {
-
         //$this->dataSet = file_get_contents(__FILE__ . 'config.json');
-        $this->fileHandler = new FileHandler();
         $this->decode();
 
     }

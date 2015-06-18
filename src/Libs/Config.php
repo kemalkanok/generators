@@ -34,7 +34,7 @@ class Config {
      */
     public function decode()
     {
-        $this->dataSet = $this->fileHandler->readFromFile(__DIR__ .'/../config.json');
+        $this->dataSet = file_get_contents(__DIR__ .'/../config.json');
         $this->dataSet = json_decode($this->dataSet);
     }
 
@@ -66,7 +66,11 @@ class Config {
             {
                 $result = $result->$v;
             }
-            return null;
+            else
+            {
+                return null;
+            }
+
         }
         return $result;
     }

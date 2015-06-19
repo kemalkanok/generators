@@ -1,14 +1,13 @@
 <?php
-namespace Kanok\Generators\Libs;
++namespace Kanok\Generators\Libs;
 
 
 
 class FileHandler {
 
-    /**
-     * reads from a file
-     * @param $file
-     * @param null $basePath
+    /** 
+     * reads a file from one of bundle folders 
+     * 
      * @return string
      */
     function readFileFromBundle($file,$basePath = null)
@@ -16,16 +15,47 @@ class FileHandler {
         $basePath = $this->inheritSettings($basePath,'stubPath',true);
         return file_get_contents($basePath.$file);
     }
+
+    /**
+     * reads a file from one of  app folders 
+     * 
+     * @return string
+     */ 
     function readFileFromApp($file,$basePath = null)
     {
         $basePath = $this->inheritSettings($basePath,'appPath');
         return file_get_contents($basePath.$file);
     }
 
-    function writeFileToApp($content , $path)
+    /**
+     * Writes a file inside of an app files
+     * 
+     * @return void
+     */ 
+    function writeFileToApp($content , $path,$file)
     {
-        $basePath = $this->inheritSettings($path).$path;
+        $basePath = $this->inheritSettings($path);
+        if(is_dir($basePath))
+        {
+            $this->writeOut($basePath.$file , $content);
+        }
+        else
+        {
+
+        }
         echo $basePath;
+    }
+
+    /**
+     * Writes the string to  the specific file
+     * 
+     * @return void
+     */ 
+    private function writeOut($content , $file)
+    {
+        $fh = fopen($file, 'w');
+        fwrite($fh, $content);
+        fclose($fh);
     }
 
     /**
@@ -42,12 +72,11 @@ class FileHandler {
             }
             else
             {
-                $basePath = app_path() . '../' . (new Config())->get($key);
+                $basePath = app_path((new Config())->get($key));
             }
             return $basePath;
         }
-        return  app_path() . '../' .$basePath;
+        return  app_path( '../' .$basePath);
     }
 
-    
 }

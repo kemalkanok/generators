@@ -46,11 +46,17 @@ class CreateMigration extends Job implements SelfHandling
         $this->writeOutput($options);
     }
 
+
     private function writeOutput($options)
     {
-        $this->fileHandler->writeFileToApp($options->content,'../database/migrations'.$options->filename);
+        $path = 'database/migrations/';
+        $this->fileHandler->writeFileToApp($options->content,$path,$options->filename);
     }
-
+    /**
+     * returns the proper filename
+     * 
+     * @return string 
+     */
     private function prepareFile()
     {
         return date('Y_m_d_His').'_create_'.$this->data->tableName.'_table.php';

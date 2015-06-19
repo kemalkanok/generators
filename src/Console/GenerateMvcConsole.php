@@ -2,11 +2,12 @@
 
 
 use Illuminate\Console\Command;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Kanok\Generators\Job\GeneratePackage;
 use Kanok\Generators\Libs\Config;
-use Kanok\Generators\Libs\FileHandler;
 
 class GenerateMvcConsole extends Command {
-
+    use DispatchesJobs;
 	/**
 	 * The console command name.
 	 *
@@ -37,7 +38,7 @@ class GenerateMvcConsole extends Command {
 	public function fire()
 	{
         $data = $this->getInput();
-        dd($data);
+        $this->dispatch(new GeneratePackage($data));
     }
 
     /**
@@ -60,6 +61,7 @@ class GenerateMvcConsole extends Command {
 
     /**
      * Get state info from config
+     *
      * @return mixed
      */
     private function getStates()
@@ -68,6 +70,8 @@ class GenerateMvcConsole extends Command {
     }
 
     /**
+     * Get types from config
+     *
      * @return array
      * @internal param $types
      */
@@ -82,6 +86,7 @@ class GenerateMvcConsole extends Command {
 
     /**
      * Get fields from user
+     *
      * @return array
      */
     private function getFields()

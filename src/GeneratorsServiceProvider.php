@@ -37,5 +37,4 @@ class GeneratorsServiceProvider extends ServiceProvider {
         });
         $this->commands('command.kanok.mvc.generate');
     }
-
 }

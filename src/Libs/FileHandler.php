@@ -13,7 +13,7 @@ class FileHandler {
      */
     function readFileFromBundle($file,$basePath = null)
     {
-        $basePath = $this->inheritSettings($basePath,'stubPath');
+        $basePath = $this->inheritSettings($basePath,'stubPath',true);
         return file_get_contents($basePath.$file);
     }
     function readFileFromApp($file,$basePath = null)
@@ -22,17 +22,32 @@ class FileHandler {
         return file_get_contents($basePath.$file);
     }
 
+    function writeFileToApp($content , $path)
+    {
+        $basePath = $this->inheritSettings($path).$path;
+        echo $basePath;
+    }
+
     /**
+     * Gets the specific package configurations
      * @param $basePath
      * @return string
      */
-    private function inheritSettings($basePath,$key)
+    private function inheritSettings($basePath,$key = 'appPath' , $package = false)
     {
         if (!$basePath) {
-            $basePath = __DIR__ . '/' . (new Config())->get($key);
+            if($package)
+            {
+                $basePath = __DIR__ . '/' . (new Config())->get($key);
+            }
+            else
+            {
+                $basePath = app_path() . '../' . (new Config())->get($key);
+            }
             return $basePath;
         }
-        return $basePath;
+        return  app_path() . '../' .$basePath;
     }
 
+    
 }

@@ -40,13 +40,27 @@ class CreateMigration extends Job implements SelfHandling
      */
     public function handle()
     {
-        $content = $this->bindFields();
-        $filename = $this->prepareFile();
-        $options = (object)compact('content','filename');
-        $this->writeOutput($options);
+        $this->writeOutput($this->prepareOptionsForWritng());
     }
 
+    /**
+     *  generates a config set for writing
+     * 
+     *  @return object
+     */ 
+    function prepareOptionsForWritng()
+    {
+        $content = $this->bindFields();
+        $filename = $this->prepareFile();
+        return (object)compact('content','filename');
 
+    }
+
+    /**
+     * Writes out the migration
+     * 
+     * @return void
+     */
     private function writeOutput($options)
     {
         $path = 'database/migrations/';

@@ -1,7 +1,5 @@
 <?php
-+namespace Kanok\Generators\Libs;
-
-
+namespace Kanok\Generators\Libs;
 
 class FileHandler {
 
@@ -41,9 +39,9 @@ class FileHandler {
         }
         else
         {
-
+                echo "@todo:will create folder first than call writeOut method!!!";
         }
-        echo $basePath;
+        //echo $basePath;
     }
 
     /**
@@ -51,7 +49,7 @@ class FileHandler {
      * 
      * @return void
      */ 
-    private function writeOut($content , $file)
+    private function writeOut($file,$content)
     {
         $fh = fopen($file, 'w');
         fwrite($fh, $content);

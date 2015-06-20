@@ -37,6 +37,10 @@ class GeneratePackage extends Job implements SelfHandling
         {
             $this->dispatch(new CreateMigration($this->data));
         }
+        if(isset($packageData->model) && $packageData->model)
+        {
+            $this->dispatch(new CreateModel($this->data));
+        }
     }
 
     /**

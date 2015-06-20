@@ -5,7 +5,9 @@ use Illuminate\Database\Migrations\Migration;
 
 class Create{utablename}Table extends Migration
 {
+
     protected $table = '{tablename}';
+
     /**
      * Run the migrations.
      *
@@ -29,5 +31,5 @@ class Create{utablename}Table extends Migration
     {
         Schema::drop($this->table);
     }
+
 }
-?>

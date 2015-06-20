@@ -48,7 +48,7 @@ class GenerateMvcConsole extends Command {
      */
     private function getInput()
     {
-        $tableName = $this->ask('Please Enter the table name');
+        $modelName = $this->ask('Please Enter the model name');
 
         $state = $this->askWithCompletion('What would you like to do?['.join('/',$this->getStates()).']',$this->getStates());
 
@@ -56,7 +56,7 @@ class GenerateMvcConsole extends Command {
 
         $type = $this->askWithCompletion('What would you like to do?['.join('/',$this->getTypes()).']',$this->getTypes());
 
-        return (object)compact('tableName', 'fields','state','type');
+        return (object)compact('modelName', 'fields','state','type');
     }
 
     /**

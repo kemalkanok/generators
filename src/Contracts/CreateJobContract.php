@@ -9,19 +9,9 @@ namespace Kanok\Generators\Contracts;
 
 interface CreateJobContract
 {
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
-    public function handle();
 
-    /**
-     *  generates a config set for writing
-     *
-     * @return object
-     */
-    function prepareOptionsForWriting();
+
+
 
     /**
      * Writes out the migration

@@ -34,20 +34,7 @@ class CreateMigration extends GenerateJob implements SelfHandling, CreateJobCont
 		$this->data = $data;
 		$this->fileHandler = new FileHandler;
 	}
-
-	/**
-	 *  generates a config set for writing
-	 * 
-	 *  @return object
-	 */ 
-	function prepareOptionsForWriting()
-	{
-		$content = $this->bindFields();
-		$filename = $this->prepareFile();
-		return (object)compact('content','filename');
-
-	}
-
+    
 	/**
 	 * Writes out the migration
 	 * 

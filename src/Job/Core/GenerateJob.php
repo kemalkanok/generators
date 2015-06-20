@@ -39,7 +39,9 @@ class GenerateJob extends Job implements CreateJobContract {
      */
     function prepareOptionsForWriting()
     {
-        // TODO: Implement prepareOptionsForWritng() method.
+        $content = $this->bindFields();
+        $filename = $this->prepareFile();
+        return (object)compact('content','filename');
     }
 
     /**

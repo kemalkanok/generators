@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Requests\Request;
+use Kanok\Generators\Framework\Http\Requests\ApiRequest;
 
-class {utablename}Request extends Request
+class {utablename}Request extends ApiRequest
 {
     /**
      * Determine if the user is authorized to make this request.

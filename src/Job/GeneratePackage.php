@@ -41,6 +41,18 @@ class GeneratePackage extends Job implements SelfHandling
         {
             $this->dispatch(new CreateModel($this->data));
         }
+        if(isset($packageData->request) && $packageData->request)
+        {
+            $this->dispatch(new CreateRequest($this->data));
+        }
+        if(isset($packageData->request) && $packageData->request)
+        {
+            $this->dispatch(new CreateRequest($this->data));
+        }
+        if(isset($packageData->controller) && $packageData->controller)
+        {
+            $this->dispatch(new CreateController($this->data));
+        }
     }
 
     /**

@@ -1,0 +1,48 @@
+{
+	"name":"Settings for generators",
+	"description":"settings for packages to generate",
+	"appPath":"app/",
+	"stubPath":"../Stubs/",
+	"status":["create","alter"],
+	"packages":{
+		"default":{
+			"migration":true,
+			"model":true,
+			"request":true,
+			"command":true,
+			"views":true,
+			"controller":true,
+			"route":true
+		},
+		"api":{
+			"migration":true,
+			"model":true,
+			"request":true,
+			"command":false,
+			"controller":true,
+			"route":true,
+			"views":false,
+			"translation":false
+		},
+		"auth_api":{
+			"migration":true,
+			"model":true,
+			"request":true,
+			"command":true,
+			"controller":true,
+			"route":true,
+			"views":false,
+			"translation":false
+		},
+		"auth":{
+			"migration":true,
+			"model":true,
+			"request":true,
+			"command":true,
+			"controller":true,
+			"route":true,
+			"views":true,
+			"translation":true
+		}
+	}
+}

@@ -1,0 +1,69 @@
+<?php
+
+namespace App\Http\Controllers;
+
+
+use App\Http\Requests\{utablename}Request as Request;
+use App\{utablename} as Eloquent;
+use Kanok\Generators\Framework\Traits\ApiControllerTrait;
+
+class {utablename}Controller extends Controller
+{
+    use ApiControllerTrait;
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index()
+    {
+        return $this->success(Eloquent::get());
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param Request|Eloquent $request
+     * @return Response
+     */
+    public function store( Request $request)
+    {
+        Eloquent::create($request->all());
+        return $this->success();
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id)
+    {
+        return $this->success(Eloquent::findOrFail($id));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int $id
+     * @param Request $request
+     * @return Response
+     */
+    public function update($id , Request $request)
+    {
+        Eloquent::findOrFail($id)->fill($request->all())->save();
+        return $this->success();
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function destroy($id)
+    {
+        Eloquent::findOrFail($id)->delete();
+    }
+}

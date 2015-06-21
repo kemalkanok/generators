@@ -1,44 +1,33 @@
 <?php namespace Kanok\Generators\Console;
 
-use Kanok\Generators\Libs\General;
+
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputOption;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Kanok\Generators\Job\GeneratePackage;
+use Kanok\Generators\Libs\Config;
 
 class GenerateMvcConsole extends Command {
-
+    use DispatchesJobs;
 	/**
 	 * The console command name.
 	 *
 	 * @var string
 	 */
-	protected $name = 'generate:mvc';
+	protected $name = 'gen:pack';
 
 	/**
 	 * The console command description.
 	 *
 	 * @var string
 	 */
-	protected $description = 'Generates A Whole package of Model , View , Controller , Request , etc..';
-
-
-
-    protected $tableName = "";
-    protected $modelName = "";
-    protected $fields = [];
-    /**
-     * @var General
-     */
-    private $general;
-
+	protected $description = 'Generates A Whole package of Model , View , Controller , Command , Request , etc..';
 
     /**
      * Create a new command instance.
      */
-
 	public function __construct( )
 	{
 		parent::__construct();
-        $this->general = app('Kanok\Generators\Libs\General');
     }
 
 	/**
@@ -48,233 +37,77 @@ class GenerateMvcConsole extends Command {
 	 */
 	public function fire()
 	{
-        $this->generalPrepare();
-        $this->generateModel();
-        $this->generateRequest();
-        $this->generateController();
-        $this->generateIndex();
-        $this->generateCreate();
-        $this->generateEdit();
-        $this->updateRoutes();
-
-
+        $data = $this->getInput();
+        $this->dispatch(new GeneratePackage($data));
     }
 
     /**
-     * Gets minimal required info from user
+     * Get input data from user
      *
+     * @return object
      */
-    function generalPrepare()
+    private function getInput()
     {
-        $this->tableName = $this->ask('Table Name:');
-        $this->modelName = $this->ask('Model Name:');
+        $modelName = $this->ask('Please Enter the model name');
+
+        $state = $this->askWithCompletion('What would you like to do?['.join('/',$this->getStates()).']',$this->getStates());
+
+        $fields = $this->getFields();
+
+        $type = $this->askWithCompletion('What would you like to do?['.join('/',$this->getTypes()).']',$this->getTypes());
+
+        return (object)compact('modelName', 'fields','state','type');
+    }
+
+    /**
+     * Get state info from config
+     *
+     * @return mixed
+     */
+    private function getStates()
+    {
+        return (new Config())->get('status');
+    }
+
+    /**
+     * Get types from config
+     *
+     * @return array
+     * @internal param $types
+     */
+    private function getTypes()
+    {
+        $data = (new Config())->get('packages');
+        foreach ($data as $key => $cols) {
+            $types[] = $key;
+        }
+        return  $types;
+    }
+
+    /**
+     * Get fields from user
+     *
+     * @return array
+     */
+    private function getFields()
+    {
+        $this->info('Please enter the specific fields for creating or altering table, To stop enter "stop"');
         $i = 1;
+        $fields = [];
         while (true) {
-            $field = trim($this->ask($i . '.Column Specs:'));
-            if ($field == "") {
+            $field = $this->ask($i . '.Field Specs');
+            //stop if data is stop
+            if (trim($field) == "stop") {
                 break;
             }
             $field = explode(':', $field);
-            $this->fields[$field[0]] = array_splice($field, 1);
+            array_slice($field, 2);
+            $key = $field[0];
+            unset($field[0]);
+            $fields[$key] = $field;
             $i++;
         }
+        return $fields;
     }
-
-    function generateModel()
-    {
-        //get the model stub
-        $modelStubPath = 'Stubs/Model/Default.stub';
-        $modelStub = $this->general->getFile($modelStubPath);
-        //bind the model
-        $fillables = "";
-        foreach ($this->fields as $key => $value) {
-            $fillables .= "'" . $key . "',";
-        }
-        $fillables = substr($fillables, 0, -1);
-
-        $modelStub = $this->general->quickStubDataBinding($modelStub, [
-            'model' => $this->modelName,
-            'table' => $this->tableName,
-            'fillable' => $fillables
-        ]);
-        // write the file
-        $modelPath = $this->modelName . '.php';
-        $this->general->writeAppFile($modelPath, $modelStub);
-        //give a nice good news screen
-        $this->info('model is created !');
-    }
-
-
-    function generateRequest()
-    {
-        //get the model stub
-        $modelStubPath = 'Stubs/Request/Default.stub';
-        $modelStub = $this->general->getFile($modelStubPath);
-        //bind the model
-        $fillables = "";
-        foreach ($this->fields as $key => $value) {
-            $fillables .= "'" . $key . "' => 'Required',";
-        }
-        $fillables = substr($fillables, 0, -1);
-
-        $modelStub = $this->general->quickStubDataBinding($modelStub, [
-            'model' => $this->modelName,
-            'fillable' => $fillables
-        ]);
-        // write the file
-        $modelPath = 'Http/Requests/'. $this->modelName . '.php';
-        $this->general->writeAppFile($modelPath, $modelStub);
-        //give a nice good news screen
-        $this->info('Request is created !');
-    }
-
-    function generateController()
-    {
-        //get the model stub
-        $modelStubPath = 'Stubs/Controller/Default.stub';
-        $modelStub = $this->general->getFile($modelStubPath);
-        //bind the model
-
-
-        $modelStub = $this->general->quickStubDataBinding($modelStub, [
-            'model' => $this->modelName
-        ]);
-        // write the file
-        $modelPath = 'Http/Controllers/'. $this->modelName . '.php';
-        $this->general->writeAppFile($modelPath, $modelStub);
-        //give a nice good news screen
-        $this->info('Controller is created !');
-    }
-
-    function generateIndex()
-    {
-        //get the model stub
-        $modelStubPath = 'Stubs/View/Index/Default.stub';
-        $modelStub = $this->general->getFile($modelStubPath);
-        //bind the model
-
-        $modelStub = $this->general->quickStubDataBinding($modelStub, [
-            'model' => $this->modelName
-        ]);
-        // write the file
-        $indexFolder ='../resources/views/'. $this->modelName . "/";
-        $this->general->createFolder($indexFolder);
-
-        $modelPath = '../resources/views/'. $this->modelName . '/index.blade.php';
-        $this->general->writeAppFile($modelPath, $modelStub);
-        //give a nice good news screen
-        $this->info('index view is created !');
-    }
-
-    function generateCreate()
-    {
-        //get the model stub
-        $modelStubPath = 'Stubs/View/Create/Default.stub';
-        $modelStub = $this->general->getFile($modelStubPath);
-        //bind the model
-
-        $fillables = "";
-        foreach ($this->fields as $key => $value) {
-
-                $fillables .= '<div class="form-group">
-        <label for="'.$key.'">{{trans("'.$this->modelName.'.'.$key.'")}}</label>
-        <input type="text" class="form-control" id="'.$key.'"  name="'.$key.'">
-    </div>
-    ';
-
-
-
-
-        }
-
-
-
-        $modelStub = $this->general->quickStubDataBinding($modelStub, [
-            'model' => $this->modelName,
-            'form' => $fillables
-        ]);
-        // write the file
-        $indexFolder ='../resources/views/'. $this->modelName . "/";
-        $this->general->createFolder($indexFolder);
-
-        $modelPath = '../resources/views/'. $this->modelName . '/create.blade.php';
-        $this->general->writeAppFile($modelPath, $modelStub);
-        //give a nice good news screen
-        $this->info('create view is created !');
-    }
-
-    function generateEdit()
-    {
-        //get the model stub
-        $modelStubPath = 'Stubs/View/Edit/Default.stub';
-        $modelStub = $this->general->getFile($modelStubPath);
-        //bind the model
-
-        $fillables = "";
-        foreach ($this->fields as $key => $value) {
-
-                $fillables .= '<div class="form-group">
-        <label for="'.$key.'">{{trans("'.$this->modelName.'.'.$key.'")}}</label>
-        <input type="text" class="form-control" id="'.$key.'"  name="'.$key.'" value="{{$element->'.$key.'}}">
-    </div>
-    ';
-
-
-
-
-        }
-
-
-
-        $modelStub = $this->general->quickStubDataBinding($modelStub, [
-            'model' => $this->modelName,
-            'form' => $fillables
-        ]);
-        // write the file
-        $indexFolder ='../resources/views/'. $this->modelName . "/";
-        $this->general->createFolder($indexFolder);
-
-        $modelPath = '../resources/views/'. $this->modelName . '/edit.blade.php';
-        $this->general->writeAppFile($modelPath, $modelStub);
-        //give a nice good news screen
-        $this->info('edit view is created !');
-    }
-
-
-    function updateRoutes()
-    {
-        //get the model stub
-        $routesPath = 'Http\Routes.php';
-        $modelStub = $this->general->getFile($routesPath);
-        $modelStub .= "
-        resource('".$this->modelName."','".$this->modelName."');";
-        $this->general->writeAppFile($routesPath,$modelStub);
-
-        $this->info('routes updated!');
-    }
-
-    /**
-	 * Get the console command arguments.
-	 *
-	 * @return array
-	 */
-	protected function getArguments()
-	{
-		return [
-		];
-	}
-
-	/**
-	 * Get the console command options.
-	 *
-	 * @return array
-	 */
-	protected function getOptions()
-	{
-		return [
-			['auth', null, InputOption::VALUE_NONE, 'Creates Package for Authentication.', null],
-			['gallery', null, InputOption::VALUE_NONE, 'Creates Package for Gallery', null],
-		];
-	}
 
 }

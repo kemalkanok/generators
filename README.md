@@ -41,3 +41,21 @@ return [
 ```
 php artisan generate:mvc
 ```
+
+Column fields when entering on terminal (default string):
+
+```
+name:string
+surname
+price:integer
+publish:date
+```
+this generates migration like this :
+```php
+$table->string('name');
+$table->string('surname');
+$table->integer('price');
+$table->date('publish'); 
+```
+
+

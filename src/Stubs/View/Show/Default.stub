@@ -1,0 +1,24 @@
+@extends('app')
+
+@section('title')
+    {{ trans('{{lang}}.show.page_title') }}
+@stop
+
+@section('content')
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    {{ trans('{{lang}}.show.header_title') }}
+                </div>
+                <div class="panel-body">
+                    <dl class="dl-horizontal">
+                        {{content}}
+                    </dl>
+                </div>
+                <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+        </div>
+    </div>
+@stop

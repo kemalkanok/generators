@@ -1,10 +1,16 @@
 <?php namespace Kanok\Generators\Console;
 
-use Kanok\Generators\Libs\General;
+use Kanok\Generators\Command\GenerateControllerCommand;
+use Kanok\Generators\Command\GenerateCrudCommand;
+use Kanok\Generators\Command\GenerateMigrationCommand;
+use Kanok\Generators\Command\GenerateModelCommand;
 use Illuminate\Console\Command;
+use Kanok\Generators\Command\GenerateRequestCommand;
+use Kanok\Generators\Command\UpdateRoutesCommand;
 use Symfony\Component\Console\Input\InputOption;
 
 class GenerateMvcConsole extends Command {
+
 
 	/**
 	 * The console command name.
@@ -21,14 +27,10 @@ class GenerateMvcConsole extends Command {
 	protected $description = 'Generates A Whole package of Model , View , Controller , Request , etc..';
 
 
-
-    protected $tableName = "";
-    protected $modelName = "";
-    protected $fields = [];
     /**
-     * @var General
+     * @var array
      */
-    private $general;
+    private $conf;
 
 
     /**
@@ -38,7 +40,6 @@ class GenerateMvcConsole extends Command {
 	public function __construct( )
 	{
 		parent::__construct();
-        $this->general = app('Kanok\Generators\Libs\General');
     }
 
 	/**
@@ -48,17 +49,37 @@ class GenerateMvcConsole extends Command {
 	 */
 	public function fire()
 	{
-        $this->generalPrepare();
-        $this->generateModel();
-        $this->generateRequest();
-        $this->generateController();
-        $this->generateIndex();
-        $this->generateCreate();
-        $this->generateEdit();
-        $this->updateRoutes();
+        if($this->option('auth_api'))
+        {
+           //auth api state
+            $this->prepareWithoutInput('auth_api');
 
+            //$this->callCommands('auth_api');
+            $this->conf->modelName = 'Register';
+            (new GenerateRequestCommand('Default',$this->conf))->fire();
 
+        }
+        else
+        {
+            $this->generalPrepare();
+            if($this->option('api'))
+            {
+                $this->callCommands('api');
+
+            }
+            else
+            {
+                $this->callCommands();
+            }
+        }
+
+        // TODO call dump-autoload command
+        //Artisan::call('dump-autoload');
+
+        $this->info('All Set is completed!');
     }
+
+
 
     /**
      * Gets minimal required info from user
@@ -66,203 +87,25 @@ class GenerateMvcConsole extends Command {
      */
     function generalPrepare()
     {
-        $this->tableName = $this->ask('Table Name:');
-        $this->modelName = $this->ask('Model Name:');
+        $tableName = $this->ask('Table Name:');
+        $modelName = $this->ask('Model Name:');
+        $fieldCount = $this->ask('Field Count:');
         $i = 1;
-        while (true) {
+        $fields = [];
+        while ( $i <= $fieldCount) {
             $field = trim($this->ask($i . '.Column Specs:'));
-            if ($field == "") {
-                break;
-            }
             $field = explode(':', $field);
-            $this->fields[$field[0]] = array_splice($field, 1);
+            $type = array_splice($field, 1);
+            if( count($type) == 0 ){
+                $type = array('string');
+            }
+            $fields[$field[0]] = $type;
             $i++;
         }
+        $resource = camel_case($modelName);
+        $this->conf = (object)compact('resource','tableName','modelName','fields');
     }
-
-    function generateModel()
-    {
-        //get the model stub
-        $modelStubPath = 'Stubs/Model/Default.stub';
-        $modelStub = $this->general->getFile($modelStubPath);
-        //bind the model
-        $fillables = "";
-        foreach ($this->fields as $key => $value) {
-            $fillables .= "'" . $key . "',";
-        }
-        $fillables = substr($fillables, 0, -1);
-
-        $modelStub = $this->general->quickStubDataBinding($modelStub, [
-            'model' => $this->modelName,
-            'table' => $this->tableName,
-            'fillable' => $fillables
-        ]);
-        // write the file
-        $modelPath = $this->modelName . '.php';
-        $this->general->writeAppFile($modelPath, $modelStub);
-        //give a nice good news screen
-        $this->info('model is created !');
-    }
-
-
-    function generateRequest()
-    {
-        //get the model stub
-        $modelStubPath = 'Stubs/Request/Default.stub';
-        $modelStub = $this->general->getFile($modelStubPath);
-        //bind the model
-        $fillables = "";
-        foreach ($this->fields as $key => $value) {
-            $fillables .= "'" . $key . "' => 'Required',";
-        }
-        $fillables = substr($fillables, 0, -1);
-
-        $modelStub = $this->general->quickStubDataBinding($modelStub, [
-            'model' => $this->modelName,
-            'fillable' => $fillables
-        ]);
-        // write the file
-        $modelPath = 'Http/Requests/'. $this->modelName . '.php';
-        $this->general->writeAppFile($modelPath, $modelStub);
-        //give a nice good news screen
-        $this->info('Request is created !');
-    }
-
-    function generateController()
-    {
-        //get the model stub
-        $modelStubPath = 'Stubs/Controller/Default.stub';
-        $modelStub = $this->general->getFile($modelStubPath);
-        //bind the model
-
-
-        $modelStub = $this->general->quickStubDataBinding($modelStub, [
-            'model' => $this->modelName
-        ]);
-        // write the file
-        $modelPath = 'Http/Controllers/'. $this->modelName . '.php';
-        $this->general->writeAppFile($modelPath, $modelStub);
-        //give a nice good news screen
-        $this->info('Controller is created !');
-    }
-
-    function generateIndex()
-    {
-        //get the model stub
-        $modelStubPath = 'Stubs/View/Index/Default.stub';
-        $modelStub = $this->general->getFile($modelStubPath);
-        //bind the model
-
-        $modelStub = $this->general->quickStubDataBinding($modelStub, [
-            'model' => $this->modelName
-        ]);
-        // write the file
-        $indexFolder ='../resources/views/'. $this->modelName . "/";
-        $this->general->createFolder($indexFolder);
-
-        $modelPath = '../resources/views/'. $this->modelName . '/index.blade.php';
-        $this->general->writeAppFile($modelPath, $modelStub);
-        //give a nice good news screen
-        $this->info('index view is created !');
-    }
-
-    function generateCreate()
-    {
-        //get the model stub
-        $modelStubPath = 'Stubs/View/Create/Default.stub';
-        $modelStub = $this->general->getFile($modelStubPath);
-        //bind the model
-
-        $fillables = "";
-        foreach ($this->fields as $key => $value) {
-
-                $fillables .= '<div class="form-group">
-        <label for="'.$key.'">{{trans("'.$this->modelName.'.'.$key.'")}}</label>
-        <input type="text" class="form-control" id="'.$key.'"  name="'.$key.'">
-    </div>
-    ';
-
-
-
-
-        }
-
-
-
-        $modelStub = $this->general->quickStubDataBinding($modelStub, [
-            'model' => $this->modelName,
-            'form' => $fillables
-        ]);
-        // write the file
-        $indexFolder ='../resources/views/'. $this->modelName . "/";
-        $this->general->createFolder($indexFolder);
-
-        $modelPath = '../resources/views/'. $this->modelName . '/create.blade.php';
-        $this->general->writeAppFile($modelPath, $modelStub);
-        //give a nice good news screen
-        $this->info('create view is created !');
-    }
-
-    function generateEdit()
-    {
-        //get the model stub
-        $modelStubPath = 'Stubs/View/Edit/Default.stub';
-        $modelStub = $this->general->getFile($modelStubPath);
-        //bind the model
-
-        $fillables = "";
-        foreach ($this->fields as $key => $value) {
-
-                $fillables .= '<div class="form-group">
-        <label for="'.$key.'">{{trans("'.$this->modelName.'.'.$key.'")}}</label>
-        <input type="text" class="form-control" id="'.$key.'"  name="'.$key.'" value="{{$element->'.$key.'}}">
-    </div>
-    ';
-
-
-
-
-        }
-
-
-
-        $modelStub = $this->general->quickStubDataBinding($modelStub, [
-            'model' => $this->modelName,
-            'form' => $fillables
-        ]);
-        // write the file
-        $indexFolder ='../resources/views/'. $this->modelName . "/";
-        $this->general->createFolder($indexFolder);
-
-        $modelPath = '../resources/views/'. $this->modelName . '/edit.blade.php';
-        $this->general->writeAppFile($modelPath, $modelStub);
-        //give a nice good news screen
-        $this->info('edit view is created !');
-    }
-
-
-    function updateRoutes()
-    {
-        //get the model stub
-        $routesPath = 'Http\Routes.php';
-        $modelStub = $this->general->getFile($routesPath);
-        $modelStub .= "
-        resource('".$this->modelName."','".$this->modelName."');";
-        $this->general->writeAppFile($routesPath,$modelStub);
-
-        $this->info('routes updated!');
-    }
-
-    /**
-	 * Get the console command arguments.
-	 *
-	 * @return array
-	 */
-	protected function getArguments()
-	{
-		return [
-		];
-	}
+    
 
 	/**
 	 * Get the console command options.
@@ -272,9 +115,74 @@ class GenerateMvcConsole extends Command {
 	protected function getOptions()
 	{
 		return [
-			['auth', null, InputOption::VALUE_NONE, 'Creates Package for Authentication.', null],
-			['gallery', null, InputOption::VALUE_NONE, 'Creates Package for Gallery', null],
+			['api', 'a', InputOption::VALUE_NONE, 'creates crud package for api integration', null],
+			['auth_api', null, InputOption::VALUE_NONE, 'creates crud package for api integration', null],
 		];
 	}
+
+    /**
+     * Batch Command Caller
+     * @param string $model
+     */
+    private function callCommands($model = 'Default')
+    {
+        if((new GenerateMigrationCommand($model,$this->conf))->fire())
+        {
+            $this->info('Migration Created');
+        }
+        if((new GenerateModelCommand($model,$this->conf))->fire())
+        {
+            $this->info('Model Created');
+        }
+        if((new GenerateRequestCommand($model,$this->conf))->fire())
+        {
+            $this->info('Request Created');
+        }
+        if((new GenerateControllerCommand($model,$this->conf))->fire())
+        {
+            $this->info('Controller Created');
+        }
+        if($model != 'auth_api')
+        {
+            if((new GenerateCrudCommand($model,$this->conf))->fire())
+            {
+                $this->info('Crud Created');
+            }
+        }
+
+        if((new UpdateRoutesCommand($model,$this->conf))->fire())
+        {
+            $this->info('Route Updated');
+        }
+    }
+
+    /**
+     * General Prepare method for no input reasons
+     * @param $key
+     */
+    private function prepareWithoutInput($key)
+    {
+        $this->conf = new \StdClass();
+
+        switch($key)
+        {
+            case 'auth_api':
+                $this->conf->tableName = "users";
+                $this->conf->modelName = "User";
+                $this->conf->fields = [
+                    'username' => [
+                        'string'
+                    ],
+                    'password' => [
+                        'string'
+                    ],
+                    'email' => [
+                        'string'
+                    ],
+                ];
+            break;
+        }
+
+    }
 
 }

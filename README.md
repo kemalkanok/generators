@@ -17,11 +17,6 @@ Edit composer.json file
     ],
     "require-dev": {
         "kanok/generators": "dev-develop", 
-    },
-    "autoload": {
-        "psr-4": {
-            "Kanok\\Generators\\": "vendor/kanok/generators/src/"
-        }
     }
 }
 ```
@@ -55,7 +50,7 @@ this generates migration like this :
 $table->string('name');
 $table->string('surname');
 $table->integer('price');
-$table->date('publish'); 
+$table->date('publish');
 ```
 
 

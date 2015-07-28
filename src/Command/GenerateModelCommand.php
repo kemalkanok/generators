@@ -9,7 +9,7 @@
 namespace Kanok\Generators\Command;
 
 
-use App\Commands\Command;
+use Illuminate\Console\Command;
 use Illuminate\Contracts\Bus\SelfHandling;
 use Kanok\Generators\Libs\FileHandler;
 

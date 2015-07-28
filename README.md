@@ -16,7 +16,7 @@ Edit composer.json file
         }
     ],
     "require-dev": {
-        "kanok/generators": "dev-develop", // dev-master or version
+        "kanok/generators": "dev-develop", 
     },
     "autoload": {
         "psr-4": {

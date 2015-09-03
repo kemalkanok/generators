@@ -7,7 +7,8 @@
  */
 
 namespace Kanok\Generators\Framework\Helpers;
-use App\User;
+
+use Src\Auth\User;
 
 class Auth {
 

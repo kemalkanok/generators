@@ -34,10 +34,10 @@ trait ApiControllerTrait {
      */
     public function fail($message = null)
     {
-        return [
-            'status' => 401,
+        return response()->json([
+            'status' => 412,
             'message' => $message ? $message : "Operation failed"
-        ];
+        ],412);
     }
 
     /**

@@ -2,6 +2,7 @@
 
 use Kanok\Generators\Console\GenerateMvcConsole;
 use Illuminate\Support\ServiceProvider;
+use Kanok\Generators\Console\generateViewConsole;
 
 class GeneratorsServiceProvider extends ServiceProvider {
 
@@ -36,5 +37,10 @@ class GeneratorsServiceProvider extends ServiceProvider {
             return $app[get_class(new GenerateMvcConsole())];
         });
         $this->commands('command.kanok.mvc.generate');
+
+        $this->app->singleton('command.kanok.view.generate', function ($app) {
+            return $app[get_class(new generateViewConsole())];
+        });
+        $this->commands('command.kanok.view.generate');
     }
 }

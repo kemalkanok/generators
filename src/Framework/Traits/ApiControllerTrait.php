@@ -46,9 +46,9 @@ trait ApiControllerTrait {
      */
     public function formFail($message = null)
     {
-        return [
+        return response()->json([
             'status' => 412,
             'message' => $message ? $message : "Form Failed"
-        ];
+        ],412);
     }
 }

@@ -9,8 +9,11 @@ namespace Kanok\Generators\Framework\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Request;
+use Illuminate\Http\Exception\HttpResponseException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use Kanok\Generators\Framework\Helpers\FileUpload;
+use Kanok\Generators\Framework\Traits\ApiControllerTrait;
 
 class RestController extends Controller {
 
@@ -49,6 +52,9 @@ class RestController extends Controller {
      * @var string
      */
     public $updateRequest = "";
+
+    use ApiControllerTrait;
+
     /**
      * List records from resource
      * @return View
@@ -56,6 +62,11 @@ class RestController extends Controller {
     public function index()
     {
         $collection = app($this->model)->all();
+        $_request = app('Illuminate\Http\Request');
+        if($_request->ajax())
+        {
+            return $this->success($collection);
+        }
         return view($this->viewNameSpace . '.index',compact('collection'));
     }
 
@@ -74,10 +85,12 @@ class RestController extends Controller {
      */
     public function store()
     {
-        $request = app($this->createRequest);
-        $requestData = $request->all();
-        $requestData = $this->upload($request, $requestData);
-        $element = app($this->model)->create($requestData);
+        $request = $this->checkAjaxRequest();
+        if($request instanceof JsonResponse)
+            return $this->formFail($request->getData());
+        $element = $this->insertRecord($request);
+        if($request->ajax())
+            return $this->success();
         return redirect()->route($this->routeNameSpace.'.edit',$element->id)->withSuccess(trans('common.created'));
     }
 
@@ -88,6 +101,11 @@ class RestController extends Controller {
      */
     public function show($id)
     {
+        $_request = app('Illuminate\Http\Request');
+        if($_request->ajax())
+        {
+            return $this->success(app($this->model)->findOrFail($id));
+        }
         app($this->model)->findOrFail($id)->delete();
         return redirect()->route($this->routeNameSpace.'.index')->withSuccess(trans('common.deleted'));
     }
@@ -110,10 +128,12 @@ class RestController extends Controller {
      */
     public function update( $id)
     {
-        $request = app($this->updateRequest);
-        $requestData = $request->all();
-        $requestData = $this->upload($request, $requestData);
-        app($this->model)->findOrFail($id)->update($requestData);
+        $request = $this->checkAjaxRequest();
+        if($request instanceof JsonResponse)
+        return $this->formFail($request->getData());
+        $request = $this->updateRecord($id);
+        if($request->ajax())
+            return $this->success();
         return redirect()->route($this->routeNameSpace.'.edit',$id)->withSuccess(trans('common.updated'));
 
     }
@@ -132,6 +152,52 @@ class RestController extends Controller {
             }
         }
         return $requestData;
+    }
+
+    /**
+     * @return \Illuminate\Foundation\Application|mixed
+     */
+    private function checkAjaxRequest()
+    {
+        $_request = app('Illuminate\Http\Request');
+        if ($_request->ajax()) {
+            try {
+               return app($this->createRequest);
+            }
+            catch (HttpResponseException $e) {
+                return $e->getResponse();
+            }
+        } else {
+            return app($this->createRequest);
+        }
+    }
+
+    /**
+     * inserts a record to the system
+     * @param $request
+     * @return mixed
+     */
+    private function insertRecord($request)
+    {
+        $requestData = $request->all();
+        $requestData = $this->upload($request, $requestData);
+        $element = app($this->model)->create($requestData);
+        return $element;
+    }
+
+    /**
+     * updates a specific record
+     *
+     * @param $id
+     * @return \Illuminate\Foundation\Application|mixed
+     */
+    private function updateRecord($id)
+    {
+        $request = app($this->updateRequest);
+        $requestData = $request->all();
+        $requestData = $this->upload($request, $requestData);
+        app($this->model)->findOrFail($id)->update($requestData);
+        return $request;
     }
 
 }

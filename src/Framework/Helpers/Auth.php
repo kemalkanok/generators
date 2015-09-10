@@ -8,7 +8,9 @@
 
 namespace Kanok\Generators\Framework\Helpers;
 
-use Src\Auth\User;
+
+use App\Http\Requests\Request;
+use Illuminate\Database\Eloquent\Model;
 
 class Auth {
 
@@ -18,26 +20,27 @@ class Auth {
      */
     public static function user()
     {
-        return User::find(session('_user_id'));
+        return app(config('auth.model'))->find(session('_user_id'));
     }
 
     /**
      * Perform login process via user object
-     * @param User $user
+     * @param Model|User $user
      */
-    public static function LoginWithUser(User $user)
+    public static function LoginWithUser(Model $user)
     {
         session()->put('_user_id',$user->id);
     }
 
     /**
      * Attempts for login process
-     * @param array $data
+     * @param Request $data
      * @return bool
      */
     public static function attempt($data)
     {
-        if($user = User::where($data)->first())
+        $data = $data->only(config('auth.fields'));
+        if($user = app(config('auth.model'))->where($data)->first())
         {
             session()->put('_user_id',$user->id);
             return true;

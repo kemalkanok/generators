@@ -15,7 +15,8 @@ use Illuminate\View\View;
 use Kanok\Generators\Framework\Helpers\FileUpload;
 use Kanok\Generators\Framework\Traits\ApiControllerTrait;
 
-class RestController extends Controller {
+class RestController extends Controller
+{
 
     /**
      * namespace of view
@@ -157,7 +158,7 @@ class RestController extends Controller {
     /**
      * @return \Illuminate\Foundation\Application|mixed
      */
-    private function checkAjaxRequest()
+    protected function checkAjaxRequest()
     {
         $_request = app('Illuminate\Http\Request');
         if ($_request->ajax()) {

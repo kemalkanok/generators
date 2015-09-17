@@ -15,8 +15,7 @@ use Illuminate\View\View;
 use Kanok\Generators\Framework\Helpers\FileUpload;
 use Kanok\Generators\Framework\Traits\ApiControllerTrait;
 
-class RestController extends Controller
-{
+class RestController extends Controller {
 
     /**
      * namespace of view
@@ -86,7 +85,7 @@ class RestController extends Controller
      */
     public function store()
     {
-        $request = $this->checkAjaxRequest();
+        $request = $this->checkAjaxRequestForCreate();
         if($request instanceof JsonResponse)
             return $this->formFail($request->getData());
         $element = $this->insertRecord($request);
@@ -129,9 +128,9 @@ class RestController extends Controller
      */
     public function update( $id)
     {
-        $request = $this->checkAjaxRequest();
+        $request = $this->checkAjaxRequestForUpdate();
         if($request instanceof JsonResponse)
-        return $this->formFail($request->getData());
+            return $this->formFail($request->getData());
         $request = $this->updateRecord($id);
         if($request->ajax())
             return $this->success();
@@ -158,7 +157,7 @@ class RestController extends Controller
     /**
      * @return \Illuminate\Foundation\Application|mixed
      */
-    protected function checkAjaxRequest()
+    private function checkAjaxRequestForCreate()
     {
         $_request = app('Illuminate\Http\Request');
         if ($_request->ajax()) {
@@ -170,6 +169,23 @@ class RestController extends Controller
             }
         } else {
             return app($this->createRequest);
+        }
+    }
+    /**
+     * @return \Illuminate\Foundation\Application|mixed
+     */
+    private function checkAjaxRequestForUpdate()
+    {
+        $_request = app('Illuminate\Http\Request');
+        if ($_request->ajax()) {
+            try {
+               return app($this->updateRequest);
+            }
+            catch (HttpResponseException $e) {
+                return $e->getResponse();
+            }
+        } else {
+            return app($this->updateRequest);
         }
     }
 

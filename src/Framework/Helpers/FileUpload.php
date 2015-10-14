@@ -9,9 +9,6 @@
 namespace Kanok\Generators\Framework\Helpers;
 
 
-
-
-
 class FileUpload {
 
     /**
@@ -24,8 +21,6 @@ class FileUpload {
     public static function uniqueUpload($request,$field,$path)
     {
         if ($pic = $request->file($field)) {
-
-
             $extension = $pic->getClientOriginalExtension();
             $uniqueName = uniqid();
             $filename =  $uniqueName . "." . $extension;
@@ -35,7 +30,6 @@ class FileUpload {
             {
                 \Image::make($path.$filename)->resize($size[0], $size[1])->save($path. $uniqueName.'.'.$suffix.'.'.$extension);
             }
-
             return '/'.$path . $filename;
         }
     }

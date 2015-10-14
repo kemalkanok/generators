@@ -9,6 +9,7 @@ namespace Kanok\Generators\Framework\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Request;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Exception\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
@@ -63,7 +64,7 @@ class RestController extends Controller {
     {
         $collection = app($this->model)->all();
         $_request = app('Illuminate\Http\Request');
-        if($_request->ajax())
+        if($_request->type == 'json')
         {
             return $this->success($collection);
         }
@@ -89,9 +90,17 @@ class RestController extends Controller {
         if($request instanceof JsonResponse)
             return $this->formFail($request->getData());
         $element = $this->insertRecord($request);
-        if($request->ajax())
+        if($request->type == 'json')
             return $this->success();
         return redirect()->route($this->routeNameSpace.'.edit',$element->id)->withSuccess(trans('common.created'));
+    }
+
+    /**
+     * @param $createdElement
+     */
+    public function extraStore($createdElement)
+    {
+
     }
 
     /**
@@ -102,11 +111,13 @@ class RestController extends Controller {
     public function show($id)
     {
         $_request = app('Illuminate\Http\Request');
-        if($_request->ajax())
-        {
-            return $this->success(app($this->model)->findOrFail($id));
-        }
+        $this->beforeDelete($id);
         app($this->model)->findOrFail($id)->delete();
+        $this->afterDelete();
+        if($_request->type == 'json')
+        {
+            return $this->success();
+        }
         return redirect()->route($this->routeNameSpace.'.index')->withSuccess(trans('common.deleted'));
     }
 
@@ -132,7 +143,7 @@ class RestController extends Controller {
         if($request instanceof JsonResponse)
             return $this->formFail($request->getData());
         $request = $this->updateRecord($id);
-        if($request->ajax())
+        if($request->type == 'json')
             return $this->success();
         return redirect()->route($this->routeNameSpace.'.edit',$id)->withSuccess(trans('common.updated'));
 
@@ -198,8 +209,65 @@ class RestController extends Controller {
     {
         $requestData = $request->all();
         $requestData = $this->upload($request, $requestData);
+        $requestData = $this->beforeCreate($requestData);
         $element = app($this->model)->create($requestData);
+        $this->afterCreate($element);
         return $element;
+    }
+
+    /**
+     * General Method before creating the element
+     * @param array $requestVariables
+     * @return array
+     */
+    public function beforeCreate(array $requestVariables)
+    {
+        return $requestVariables;
+    }
+
+    /**
+     * General Method after creating the element
+     * @param Model $element
+     */
+    public function afterCreate($element)
+    {
+
+    }
+
+    /**
+     * General Method before updating the element
+     * @param array $requestVariables
+     * @return array
+     */
+    public function beforeUpdate(array $requestVariables)
+    {
+        return $requestVariables;
+    }
+
+    /**
+     * General Method after updating the element
+     * @param Model $element
+     */
+    public function afterUpdate($element)
+    {
+
+    }
+
+    /**
+     * General Method before deleting the element
+     * @param $id
+     */
+    public function beforeDelete($id)
+    {
+
+    }
+
+    /**
+     * General Method after deleting the element
+     */
+    public function afterDelete()
+    {
+
     }
 
     /**
@@ -213,7 +281,9 @@ class RestController extends Controller {
         $request = app($this->updateRequest);
         $requestData = $request->all();
         $requestData = $this->upload($request, $requestData);
-        app($this->model)->findOrFail($id)->update($requestData);
+        $requestData = $this->beforeUpdate($requestData);
+        $element = app($this->model)->findOrFail($id)->update($requestData);
+        $this->afterUpdate($element);
         return $request;
     }
 

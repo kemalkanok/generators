@@ -76,8 +76,8 @@ class PaypalJob {
 			->setInvoiceNumber(uniqid());
 		$baseUrl      = env('APP_URL');
 		$redirectUrls = new RedirectUrls();
-		$redirectUrls->setReturnUrl("$baseUrl/test/success")
-		             ->setCancelUrl("$baseUrl/test/fail");
+		$redirectUrls->setReturnUrl(url("/payment/success"))
+		             ->setCancelUrl(url("/payment/fail"));
 		$payment = new Payment();
 		$payment->setIntent("sale")
 		        ->setPayer($this->payer)

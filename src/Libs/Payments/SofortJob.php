@@ -27,6 +27,7 @@ class SofortJob {
 
 	private $total = 0;
 
+
 	public function addItem($name, $price, $quantity) {
 		for($i=0;$i<$quantity;$i++)
 		{
@@ -43,7 +44,7 @@ class SofortJob {
 	{
 		$configkey = env('SOFORT_SECRET');
 		$this->provider = new Sofortueberweisung($configkey);
-		$this->provider->setReason('Testueberweisung', 'Verwendungszweck');
+		$this->provider->setReason(env('SOFORT_TITLE'), date('d.m.Y'));
 		$this->provider->setSuccessUrl(url('payment/success'), true);
 		$this->provider->setAbortUrl(url('payment/fail'));
 	}

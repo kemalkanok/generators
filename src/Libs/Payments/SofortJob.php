@@ -22,10 +22,9 @@ class SofortJob {
 
 
 	private $provider;
-
 	private $collection = [];
-
-	private $total = 0;
+	private $total      = 0;
+	private $text       = "";
 
 
 	public function addItem($name, $price, $quantity) {
@@ -34,20 +33,18 @@ class SofortJob {
 			$this->collection[] = $price;
 			$this->total =+ (double)$price;
 		}
+		$this->text.= $name;
 	}
 
 	public function __construct() {
-		$this->handle();
-	}
-
-	private function handle()
-	{
 		$configkey = env('SOFORT_SECRET');
 		$this->provider = new Sofortueberweisung($configkey);
-		$this->provider->setReason(env('SOFORT_TITLE'), date('d.m.Y'));
+		$this->provider->setReason(env('SOFORT_TITLE'), $this->text);
 		$this->provider->setSuccessUrl(url('payment/success'), true);
 		$this->provider->setAbortUrl(url('payment/fail'));
 	}
+
+
 
 
 

@@ -39,7 +39,7 @@ class SofortJob {
 	public function __construct() {
 		$configkey = env('SOFORT_SECRET');
 		$this->provider = new Sofortueberweisung($configkey);
-		$this->provider->setReason(env('SOFORT_TITLE'), $this->text);
+
 		session()->put('token',uniqid());
 		$this->provider->setSuccessUrl(url('payment/success/?token='.session('token')), true);
 		$this->provider->setAbortUrl(url('payment/fail'));
@@ -53,7 +53,7 @@ class SofortJob {
 	 * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
 	 */
 	public function payment() {
-
+		$this->provider->setReason(env('SOFORT_TITLE'), $this->text);
 		$this->provider->setAmount($this->total);
 		$this->provider->setCurrencyCode('EUR');
 		$this->provider->sendRequest();

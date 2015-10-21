@@ -112,7 +112,7 @@ class PaypalJob {
 		}
 		$approvalUrl = $payment->getApprovalLink();
 		$token       = substr($approvalUrl, strripos($approvalUrl, "token")+6);
-		session()->put('_payment.payment_token', $token);
+		session()->put('token', $token);
 		return redirect($approvalUrl);
 	}
 }

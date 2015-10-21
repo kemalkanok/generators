@@ -40,7 +40,8 @@ class SofortJob {
 		$configkey = env('SOFORT_SECRET');
 		$this->provider = new Sofortueberweisung($configkey);
 		$this->provider->setReason(env('SOFORT_TITLE'), $this->text);
-		$this->provider->setSuccessUrl(url('payment/success'), true);
+		session()->put('token',uniqid());
+		$this->provider->setSuccessUrl(url('payment/success/?token='.session('token')), true);
 		$this->provider->setAbortUrl(url('payment/fail'));
 	}
 

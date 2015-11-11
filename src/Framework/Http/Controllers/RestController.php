@@ -13,10 +13,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Exception\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
+use Kanok\Generators\Contracts\RestContract;
 use Kanok\Generators\Framework\Helpers\FileUpload;
 use Kanok\Generators\Framework\Traits\ApiControllerTrait;
 
-class RestController extends Controller {
+class RestController extends Controller
+{
 
     /**
      * namespace of view
@@ -54,6 +56,19 @@ class RestController extends Controller {
      */
     public $updateRequest = "";
 
+
+
+
+    public function __construct(){
+        $this->viewNameSpace  = $this->getViewNameSpace();
+        $this->routeNameSpace = $this->getRouteNameSpace();
+        $this->model          = $this->getModelName();
+        $this->uploads        = $this->getUploads();
+        $this->uploadPath     = $this->getUploadPath();
+        $this->createRequest  = $this->getCreateRequest();
+        $this->updateRequest  = $this->getUpdateRequest();
+
+    }
     use ApiControllerTrait;
 
     /**
@@ -282,7 +297,8 @@ class RestController extends Controller {
         $requestData = $request->all();
         $requestData = $this->upload($request, $requestData);
         $requestData = $this->beforeUpdate($requestData);
-        $element = app($this->model)->findOrFail($id)->update($requestData);
+        $element = app($this->model)->findOrFail($id);
+        $element->update($requestData);
         $this->afterUpdate($element);
         return $request;
     }
